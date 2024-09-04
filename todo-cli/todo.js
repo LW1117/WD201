@@ -41,9 +41,9 @@ const todoList = () => {
     list.forEach((item) => {
       formattedList += `[${item.completed ? "x" : " "}] ${item.title} ${
         item.dueDate === today ? "" : item.dueDate
-      }\n`;
+      },`;
     });
-    return formattedList;
+    return formattedList.split(",").join("\n");
   };
 
   return {
