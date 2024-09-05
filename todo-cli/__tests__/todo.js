@@ -32,6 +32,8 @@ describe("Todolist Test Suite", () => {
       dueDate: today,
     });
     expect(all.length).toBe(todoItemsCount + 1);
+    expect(!all[all.length - 1].title).toBe(false);
+    expect(!all[all.length - 1].dueDate).toBe(false);
   });
 
   test("Should mark todo as complete", () => {
