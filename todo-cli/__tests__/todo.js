@@ -46,7 +46,7 @@ describe("Todolist Test Suite", () => {
   test("Should get overdue items", () => {
     const overdueCount = todos.overdue().length;
     newtodo = {
-      title: "Test tod",
+      title: "Test todo 3",
       completed: false,
       dueDate: yesterday,
     };
@@ -57,7 +57,7 @@ describe("Todolist Test Suite", () => {
   test("Should get dueToday items", () => {
     const dueTodayCount = todos.dueToday().length;
     newtodo = {
-      title: "Test tod",
+      title: "Test todo 4",
       completed: false,
       dueDate: today,
     };
@@ -68,7 +68,7 @@ describe("Todolist Test Suite", () => {
   test("Should get dueLater items", () => {
     const dueLaterCount = todos.dueLater().length;
     newtodo = {
-      title: "Test tod",
+      title: "Test todo 5",
       completed: false,
       dueDate: tomorrow,
     };
