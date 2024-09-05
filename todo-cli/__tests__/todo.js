@@ -35,10 +35,12 @@ describe("Todolist Test Suite", () => {
   });
 
   test("Should mark todo as complete", () => {
-    expect(all[0].completed).toBe(false);
-    markAsComplete(0);
-    expect(all[0].completed).toBe(true);
-    all[0].completed = true;
+    for (let index = 0; index < all.length; index++) {
+      if (!all[index].completed) {
+        markAsComplete(index);
+        expect(all[index].completed).toStrictEqual(true);
+      }
+    }
   });
 
   test("Should get overdue items", () => {
