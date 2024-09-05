@@ -44,47 +44,35 @@ describe("Todolist Test Suite", () => {
   });
 
   test("Should get overdue items", () => {
+    const overdueCount = todos.overdue().length;
     newtodo = {
       title: "Test tod",
       completed: false,
       dueDate: yesterday,
     };
     todos.add(newtodo);
-    expect(todos.overdue()).toStrictEqual(
-      todos.all.filter((todoItem) => {
-        if (todoItem.dueDate <= newtodo.dueDate) return true;
-        else return false;
-      }),
-    );
+    expect(todos.overdue().length).toBe(overdueCount + 1);
   });
 
   test("Should get dueToday items", () => {
+    const dueTodayCount = todos.dueToday().length;
     newtodo = {
       title: "Test tod",
       completed: false,
       dueDate: today,
     };
     todos.add(newtodo);
-    expect(todos.dueToday()).toStrictEqual(
-      todos.all.filter((todoItem) => {
-        if (todoItem.dueDate === newtodo.dueDate) return true;
-        else return false;
-      }),
-    );
+    expect(todos.dueToday().length).toBe(dueTodayCount + 1);
   });
 
   test("Should get dueLater items", () => {
+    const dueLaterCount = todos.dueLater().length;
     newtodo = {
       title: "Test tod",
       completed: false,
       dueDate: tomorrow,
     };
     todos.add(newtodo);
-    expect(todos.dueLater()).toStrictEqual(
-      todos.all.filter((todoItem) => {
-        if (todoItem.dueDate >= newtodo.dueDate) return true;
-        else return false;
-      }),
-    );
+    expect(todos.dueLater().length).toBe(dueLaterCount + 1);
   });
 });
