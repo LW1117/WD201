@@ -1,3 +1,4 @@
+const { describe, expect, test, beforeAll } = require("@jest/globals");
 const todoList = require("../todo");
 
 const { all, markAsComplete, add, overdue, dueToday, dueLater } = todoList();
@@ -24,7 +25,7 @@ describe("Todolist Test Suite", () => {
     });
   });
   test("Should add new todo", () => {
-    const todoItemsCount = all.length;
+    let todoItemsCount = all.length;
     add({
       title: "Test tod",
       completed: false,
@@ -37,6 +38,7 @@ describe("Todolist Test Suite", () => {
     expect(all[0].completed).toBe(false);
     markAsComplete(0);
     expect(all[0].completed).toBe(true);
+    all[0].completed = true;
   });
 
   test("Should get overdue items", () => {
