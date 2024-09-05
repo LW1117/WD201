@@ -1,4 +1,10 @@
-const { describe, expect, test, beforeAll } = require("@jest/globals");
+const {
+  describe,
+  expect,
+  test,
+  beforeAll,
+  afterEach,
+} = require("@jest/globals");
 const todoList = require("../todo");
 
 const { all, markAsComplete, add, overdue, dueToday, dueLater } = todoList();
@@ -26,14 +32,16 @@ describe("Todolist Test Suite", () => {
   });
   test("Should add new todo", () => {
     let todoItemsCount = all.length;
-    add({
+    let temptodo = {
       title: "Test tod",
       completed: false,
       dueDate: today,
-    });
+    };
+    add(temptodo);
     expect(all.length).toBe(todoItemsCount + 1);
-    expect(!all[all.length - 1].title).toBe(false);
-    expect(!all[all.length - 1].dueDate).toBe(false);
+    expect(all[all.length - 1].title).toStrictEqual(temptodo.title);
+    expect(all[all.length - 1].completed).toStrictEqual(temptodo.completed);
+    expect(all[all.length - 1].dueDate).toStrictEqual(temptodo.dueDate);
   });
 
   test("Should mark todo as complete", () => {
@@ -80,5 +88,9 @@ describe("Todolist Test Suite", () => {
         else return false;
       }),
     );
+  });
+
+  afterEach(() => {
+    while (all.length > 0) all.pop();
   });
 });
