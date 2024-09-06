@@ -4,13 +4,20 @@ const { request, response } = require("express");
 const bodyParser = require("body-parser");
 
 const { Todo } = require("./models");
+const { json } = require("sequelize");
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.get("/todos", (request, response) => {
+app.get("/todos", async (request, response) => {
   console.log("Todo list");
+  try {
+    const todos = await Todo.findAll();
+    return response.json(todos);
+  } catch (error) {
+    return response.status(442).json(error);
+  }
 });
 
 app.post("/todos", async (request, response) => {
@@ -41,8 +48,20 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
   }
 });
 
-app.delete("/todos/:id", (request, response) => {
+app.delete("/todos/:id", async (request, response) => {
   console.log("Delete a todo with id ", request.params.id);
+  const item = await Todo.findByPk(request.params.id);
+  if (!item) return response.json(false);
+  try {
+    await Todo.destroy({
+      where: {
+        id: request.params.id,
+      },
+    });
+    return response.json(true);
+  } catch (error) {
+    return response.json(false);
+  }
 });
 
 module.exports = app;
