@@ -60,7 +60,7 @@ app.delete("/todos/:id", async (request, response) => {
     });
     return response.json(true);
   } catch (error) {
-    return response.json(false);
+    return response.status(442).json(error);
   }
 });
 
