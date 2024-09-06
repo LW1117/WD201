@@ -50,4 +50,22 @@ describe("Todo test suite", () => {
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
     expect(parsedUpdateResponse.completed).toBe(true);
   });
+
+  test("Delete a todo", async () => {
+    const response = await agent.post("/todos").send({
+      title: "Buy milk",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    const parsedResponse = JSON.parse(response.text);
+    const todoId = parsedResponse.id;
+
+    let deleteResponse = await agent.delete(`/todos/${todoId}`).send();
+    expect(deleteResponse.statusCode).toBe(200);
+    expect(deleteResponse.text).toBe("true");
+
+    deleteResponse = await agent.delete(`/todos/${todoId}`).send();
+    expect(deleteResponse.statusCode).toBe(200);
+    expect(deleteResponse.text).toBe("false");
+  });
 });
