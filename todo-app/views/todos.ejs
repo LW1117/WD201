@@ -35,7 +35,7 @@
         <%} %>
     </ul>
     <h5>Due Today</h5>
-    <span id="count-due-today" (<%=dueToday.length %>)</span>
+    <span id="count-due-today">(<%=dueToday.length %>)</span>
     <ul class="list-none">
       <% for (let i=0; i < dueToday.length; i++){ todoItem=dueToday[i].dataValues %>
         <li class="Todo-Item">
@@ -56,7 +56,7 @@
         <%} %>
     </ul>
     <h5>Due Later</h5>
-    <span id="count-due-later" (<%=dueLater.length %>)</span>
+    <span id="count-due-later">(<%=dueLater.length %>)</span>
     <ul class="list-none">
       <% for (let i=0; i < dueLater.length; i++){ todoItem=dueLater[i].dataValues %>
         <li class="Todo-Item">
