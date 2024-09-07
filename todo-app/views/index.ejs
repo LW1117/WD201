@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="csrf-token" content="<%- csrfToken %>" />
+  <meta name="csrf-token" content="<%= csrfToken %>" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./css/styles.css" />
   <title>Todo</title>
@@ -14,7 +14,7 @@
       .getAttribute("content");
 
     function updateTodo(id, completedStatus) {
-      fetch(`/todos/${id}`, {
+      fetch(`/todos/${Number(id)}`, {
         method: "put",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

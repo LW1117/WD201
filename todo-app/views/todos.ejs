@@ -8,9 +8,8 @@
   <% for (let i=0; i < todo.length; i++){ let todoItem=todo[i].dataValues %>
     <li class="Todo-Item">
       <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-100 ">
-        <input type="checkbox" name="" id="checkbox-item-<%= todoItem.id %>" <%=todoItem.completed? " checked" : "" %>
-        class="w-4 h-4 text-blue-600 border-gray-300 rounded" value=<%= todoItem.completed %> onclick="updateTodo(<%=
-            todoItem.id %>,<%= !todoItem.completed %>)">
+        <input type="checkbox" name="" id="checkbox-item-<%= todoItem.id %>"
+        class="w-4 h-4 text-blue-600 border-gray-300 rounded" onclick="updateTodo(<%= todoItem.id %>,<%= !todoItem.completed %>)" <%= todoItem.completed ? "checked" : "" %>>
               <label for="checkbox-item-<%= todoItem.id %>" class="ml-2 text-sm text-gray-600 cursor-pointer">
                 <%= todoItem.title %>
               </label>

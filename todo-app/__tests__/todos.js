@@ -31,16 +31,15 @@ describe("Todo Application", function () {
       await db.sequelize.close();
       await server.close();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   });
 
   test("Creates a todo and responds with json at /todos POST endpoint", async () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
-    console.log(csrfToken);
     const response = await agent.post("/todos").send({
-      title: "Buy milk",
+      title: "Buy xbox",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
@@ -52,7 +51,7 @@ describe("Todo Application", function () {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
-      title: "Buy milk",
+      title: "Buy play station",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
@@ -82,7 +81,7 @@ describe("Todo Application", function () {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
-      title: "Buy milk",
+      title: "Buy pc",
       dueDate: new Date().toISOString(),
       completed: true,
       _csrf: csrfToken,
@@ -108,40 +107,40 @@ describe("Todo Application", function () {
     expect(parsedUpdatedResponse.completed).toBe(false);
   });
 
-  // test("Fetches all todos in the database using /todos endpoint", async () => {
-  //   await agent.post("/todos").send({
-  //     title: "Buy xbox",
-  //     dueDate: new Date().toISOString(),
-  //     completed: false,
-  //   });
-  //   await agent.post("/todos").send({
-  //     title: "Buy ps3",
-  //     dueDate: new Date().toISOString(),
-  //     completed: false,
-  //   });
-  //   const response = await agent.get("/todos");
-  //   const parsedResponse = JSON.parse(response.text);
+  test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
+    let res = await agent.get("/");
+    let csrfToken = extractCsrfToken(res);
+    await agent.post("/todos").send({
+      title: "Buy steam deck",
+      dueDate: new Date().toISOString(),
+      completed: true,
+      _csrf: csrfToken,
+    });
 
-  //   expect(parsedResponse.length).toBe(4);
-  //   expect(parsedResponse[3]["title"]).toBe("Buy ps3");
-  // });
+    const groupedTodosResponse = await agent
+      .get("/")
+      .set("Accept", "application/json");
+    const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
+    const dueTodyCount = parsedGroupedResponse.dueToday.length;
+    const latestTodo = parsedGroupedResponse.dueToday[dueTodyCount - 1];
+    const todoID = latestTodo.id;
 
-  // test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
-  //   // FILL IN YOUR CODE HERE
-  //   const response = await agent.post("/todos").send({
-  //     title: "Buy steam deck",
-  //     dueDate: new Date().toISOString(),
-  //     completed: false,
-  //   });
-  //   const parsedResponse = JSON.parse(response.text);
-  //   const todoID = parsedResponse.id;
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
 
-  //   let deleteResponse = await agent.delete(`/todos/${todoID}`);
-  //   deleteResponse = JSON.parse(deleteResponse.text);
-  //   expect(deleteResponse).toBe(true);
+    let deleteResponse = await agent.delete(`/todos/${todoID}`).send({
+      _csrf: csrfToken,
+    });
+    deleteResponse = JSON.parse(deleteResponse.text);
+    expect(deleteResponse).toBe(true);
 
-  //   deleteResponse = await agent.delete(`/todos/${todoID}`);
-  //   deleteResponse = JSON.parse(deleteResponse.text);
-  //   expect(deleteResponse).toBe(false);
-  // });
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
+
+    deleteResponse = await agent.delete(`/todos/${todoID}`).send({
+      _csrf: csrfToken,
+    });
+    deleteResponse = JSON.parse(deleteResponse.text);
+    expect(deleteResponse).toBe(false);
+  });
 });
