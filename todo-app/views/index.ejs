@@ -13,12 +13,13 @@
       .querySelector('meta[name="csrf-token"]')
       .getAttribute("content");
 
-    function updateTodo(id) {
-      fetch(`/todos/${id}/markAsCompleted`, {
+    function updateTodo(id, completedStatus) {
+      fetch(`/todos/${id}`, {
         method: "put",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          "_csrf": token
+          "_csrf": token,
+          "completed": completedStatus
         })
       })
         .then((res) => {
@@ -51,8 +52,8 @@
   <div class="grid grid-cols-6">
     <div class="col-start-3 col-span-2">
       <%- include("header.ejs") %>
-        <form action="/todos" method="post">
-          <input type="hidden" name="_csrf" value="<%- csrfToken %>" />
+        <form action="/todos" method="post"">
+          <input type="hidden" name="_csrf" value="<%- csrfToken %>">
           <div class="flex gap-2 py-4">
             <div class="flex-auto">
               <input type="text" placeholder="What's next?" name="title"
@@ -60,7 +61,7 @@
             </div>
             <div class="flex-auto">
               <input type="date" name="dueDate"
-                class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm leading-4">
+                class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm leading-4" required>
             </div>
             <div class="flex-none">
               <button type="submit"

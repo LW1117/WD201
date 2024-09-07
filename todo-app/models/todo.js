@@ -57,8 +57,11 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    markAsCompleted() {
-      return this.update({ completed: true });
+    setCompletionStatus(completeStatus) {
+      if (typeof completeStatus !== "boolean") {
+        throw new Error("Invalid completion status");
+      }
+      return this.update({ completed: completeStatus });
     }
   }
   Todo.init(
