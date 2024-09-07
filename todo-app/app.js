@@ -9,7 +9,6 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
 app.get("/", async (request, response) => {
-  // const allTodos = await Todo.getTodos();
   const overdueTodos = await Todo.getOverdue();
   const dueTodayTodos = await Todo.getDueToday();
   const dueLaterTodos = await Todo.getDueLater();
@@ -27,12 +26,6 @@ app.get("/", async (request, response) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/todos", async function (_request, response) {
-  console.log("Processing list of all Todos ...");
-  // FILL IN YOUR CODE HERE
-
-  // First, we have to query our PostgerSQL database using Sequelize to get list of all Todos.
-  // Then, we have to respond with all Todos, like:
-  // response.send(todos)
   try {
     const todos = await Todo.findAll();
     return response.json(todos);
@@ -74,20 +67,11 @@ app.put("/todos/:id/markAsCompleted", async function (request, response) {
 
 app.delete("/todos/:id", async function (request, response) {
   console.log("We have to delete a Todo with ID: ", request.params.id);
-  // FILL IN YOUR CODE HERE
-
-  // First, we have to query our database to delete a Todo by ID.
-  // Then, we have to respond back with true/false based on whether the Todo was deleted or not.
-  // response.send(true)
   const item = await Todo.findByPk(request.params.id);
   if (!item) return response.send(false);
   try {
-    await Todo.destroy({
-      where: {
-        id: request.params.id,
-      },
-    });
-    return response.send(true);
+    await Todo.remove(request.params.id);
+    return response.json({ success: true });
   } catch (error) {
     return response.status(442).json(error);
   }
