@@ -73,6 +73,7 @@
           <%- include("todos.ejs", { title: "Overdue" , todo: overdue, count: "count-overdue" }) %>
             <%- include("todos.ejs", { title: "Due Today" , todo: dueToday, count: "count-due-today" }) %>
               <%- include("todos.ejs", { title: "Due Later" , todo: dueLater, count: "count-due-later" }) %>
+              <%- include("todos.ejs", { title: "Completed Items" , todo: completed, count: "count-completed" }) %>
         </div>
         <%- include("footer.ejs") %>
     </div>

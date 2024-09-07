@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.lt]: new Date(),
           },
+          completed: {
+            [Op.eq]: false,
+          },
         },
       });
     }
@@ -35,6 +38,9 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.eq]: new Date(),
           },
+          completed: {
+            [Op.eq]: false,
+          },
         },
       });
     }
@@ -44,6 +50,19 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           dueDate: {
             [Op.gt]: new Date(),
+          },
+          completed: {
+            [Op.eq]: false,
+          },
+        },
+      });
+    }
+
+    static getCompleted() {
+      return this.findAll({
+        where: {
+          completed: {
+            [Op.eq]: true,
           },
         },
       });
