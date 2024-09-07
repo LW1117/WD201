@@ -1,10 +1,14 @@
 const express = require("express");
+const csurf = require("csurf");
+const cookieParser = require("cookie-parser");
 const app = express();
 const path = require("path");
 const { Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser("ssh! some secret string"));
+app.use(csurf({ cookie: true }));
 
 app.set("view engine", "ejs");
 
@@ -17,9 +21,14 @@ app.get("/", async (request, response) => {
       overdue: overdueTodos,
       dueToday: dueTodayTodos,
       dueLater: dueLaterTodos,
+      csrfToken: request.csrfToken(),
     });
   } else {
-    response.json(overdueTodos, dueTodayTodos, dueLaterTodos);
+    response.json({
+      overdue: overdueTodos,
+      dueToday: dueTodayTodos,
+      dueLater: dueLaterTodos,
+    });
   }
 });
 
