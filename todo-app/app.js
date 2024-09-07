@@ -8,11 +8,18 @@ app.use(bodyParser.json());
 app.set("view engine", "ejs");
 
 app.get("/", async (request, response) => {
-  const allTodos = await Todo.getTodos();
+  // const allTodos = await Todo.getTodos();
+  const overdueTodos = await Todo.getOverdue();
+  const dueTodayTodos = await Todo.getDueToday();
+  const dueLaterTodos = await Todo.getDueLater();
   if (request.accepts("html")) {
-    response.render("index", { allTodos });
+    response.render("index", {
+      overdue: overdueTodos,
+      dueToday: dueTodayTodos,
+      dueLater: dueLaterTodos,
+    });
   } else {
-    response.json(allTodos);
+    response.json(overdueTodos, dueTodayTodos, dueLaterTodos);
   }
 });
 
