@@ -1,5 +1,5 @@
 const express = require("express");
-const csurf = require("csurf");
+const csrf = require("tiny-csrf");
 const cookieParser = require("cookie-parser");
 const app = express();
 const path = require("path");
@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("ssh! some secret string"));
-app.use(csurf({ cookie: true }));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 app.set("view engine", "ejs");
 
