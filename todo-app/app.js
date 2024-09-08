@@ -103,7 +103,7 @@ app.post("/users", async (request, response) => {
       if (err) {
         console.log(err);
       }
-      request.flash("success", "Welcome!");
+      request.flash("success", "Account created. Welcome!");
       response.redirect("/todos");
     });
   } catch (error) {
