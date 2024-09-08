@@ -1,0 +1,20 @@
+<% if (messages && messages.success && messages.success.length > 0) { %>
+  <div class="bg-green-100 border-t border-b border-green-500 text-green-700 px-4 py-3 my-4 rounded">
+    <p class="font-bold">Success</p>
+    <ul>
+      <% messages.success.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>
+<% if (messages && messages.error && messages.error.length > 0) { %>
+  <div class="bg-red-100 border-t border-b border-red-500 text-red-700 px-4 py-3 my-4 rounded">
+    <p class="font-bold">Error</p>
+    <ul>
+      <% messages.error.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>
