@@ -3,14 +3,17 @@ const csrf = require("tiny-csrf");
 const cookieParser = require("cookie-parser");
 const app = express();
 const path = require("path");
-const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");
-
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
+const flash = require("connect-flash");
+
+const { Todo, User } = require("./models");
+
+app.set("view engine", "ejs");
 
 const saltRounds = 10;
 
@@ -18,8 +21,10 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("ssh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
+app.use(express.static(path.join(__dirname, "public")));
+app.set("views", path.join(__dirname, "views"));
 
-app.set("view engine", "ejs");
+app.use(flash());
 
 app.use(
   session({
@@ -42,11 +47,14 @@ passport.use(
     (username, password, done) => {
       User.findOne({ where: { email: username } })
         .then(async (user) => {
+          if (!user) {
+            return done(null, false, { message: "Email not found" });
+          }
           const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
           } else {
-            return done("Invalid Password");
+            return done(null, false, { message: "Invalid Password" });
           }
         })
         .catch((error) => {
@@ -71,6 +79,11 @@ passport.deserializeUser((id, done) => {
     });
 });
 
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
+
 app.get("/signup", (request, response) => {
   response.render("signup", {
     csrfToken: request.csrfToken(),
@@ -90,10 +103,12 @@ app.post("/users", async (request, response) => {
       if (err) {
         console.log(err);
       }
+      request.flash("success", "Welcome!");
       response.redirect("/todos");
     });
   } catch (error) {
-    console.error(error);
+    request.flash("error", error.message);
+    response.redirect("/signup");
   }
 });
 
@@ -105,9 +120,12 @@ app.get("/login", (request, response) => {
 
 app.post(
   "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
   (request, response) => {
-    console.log(request.user);
+    request.flash("success", "Welcome!");
     response.redirect("/todos");
   },
 );
@@ -143,6 +161,7 @@ app.get(
         dueToday: dueTodayTodos,
         dueLater: dueLaterTodos,
         completed: completedTodos,
+        message: "",
         csrfToken: request.csrfToken(),
       });
     } else {
@@ -156,8 +175,6 @@ app.get(
   },
 );
 
-app.use(express.static(path.join(__dirname, "public")));
-
 app.get(
   "/todos/:id",
   connectEnsureLogin.ensureLoggedIn(),
@@ -167,6 +184,7 @@ app.get(
       return response.json(todo);
     } catch (error) {
       console.log(error);
+      request.flash("error", error.message);
       return response.status(422).json(error);
     }
   },
@@ -183,10 +201,11 @@ app.post(
         dueDate: request.body.dueDate,
         userId: request.user.id,
       });
+      request.flash("success", "Todo created!");
       return response.redirect("/todos");
     } catch (error) {
-      console.log(error);
-      return response.status(422).json(error);
+      request.flash("error", error.message);
+      return response.redirect("/todos");
     }
   },
 );
@@ -199,9 +218,11 @@ app.put(
     const todo = await Todo.findByPk(request.params.id);
     try {
       const updatedTodo = await todo.setCompletionStatus(completed);
+      request.flash("success", "Todo updated!");
       return response.json(updatedTodo);
     } catch (error) {
       console.log(error);
+      request.flash("error", error.message);
       return response.status(422).json(error);
     }
   },
@@ -213,11 +234,16 @@ app.delete(
   async function (request, response) {
     console.log("We have to delete a Todo with ID: ", request.params.id);
     const item = await Todo.findByPk(request.params.id);
-    if (!item) return response.send(false);
+    if (!item) {
+      request.flash("error", "Todo not found!");
+      return response.send(false);
+    }
     try {
       await Todo.remove(request.params.id, request.user.id);
+      request.flash("success", "Todo deleted!");
       return response.send(true);
     } catch (error) {
+      request.flash("error", error.message);
       return response.status(442).json(error);
     }
   },
