@@ -130,7 +130,7 @@ app.post(
   },
 );
 
-app.get("/signout", (request, response) => {
+app.get("/signout", (request, response, next) => {
   request.logout((err) => {
     if (err) {
       // eslint-disable-next-line no-undef
@@ -141,9 +141,13 @@ app.get("/signout", (request, response) => {
 });
 
 app.get("/", async (request, response) => {
-  response.render("index", {
-    csrfToken: request.csrfToken(),
-  });
+  if (request.user) {
+    response.redirect("todos");
+  } else {
+    response.render("index", {
+      csrfToken: request.csrfToken(),
+    });
+  }
 });
 
 app.get(
